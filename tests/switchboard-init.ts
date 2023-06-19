@@ -37,8 +37,8 @@ describe('switchboard-init', () => {
 
       console.log('Your transaction signature', tx);
     } catch (err) {
-      console.log(`Some error occured: ${err}`);
       console.log(err);
+      throw err;
     }
   });
 });
