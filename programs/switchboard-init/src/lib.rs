@@ -2,12 +2,13 @@ use anchor_lang::prelude::*;
 use anchor_lang::solana_program::clock;
 use std::convert::TryInto;
 use switchboard_v2::{
-    AggregatorAccountData,
-    SwitchboardDecimal,
-    SWITCHBOARD_PROGRAM_ID,
+    AggregatorAccountData, OracleQueueAccountData, PermissionAccountData, SbState,
+    SwitchboardDecimal, VrfAccountData, VrfRequestRandomness, SWITCHBOARD_PROGRAM_ID,
 };
+pub mod actions;
+pub use actions::*;
 
-declare_id!("5F1aAkVdT4M4b2XcBAtuMWKXRM9niTTnqg3TzAWZeANo");
+declare_id!("91ZY5HgJnypFcnzkYqMU8M4V5UMrvYGXgQPtZ1cHaj2c");
 
 #[program]
 pub mod switchboard_init {
@@ -20,7 +21,10 @@ pub mod switchboard_init {
         Ok(())
     }
 
-
+    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    pub fn init_client(ctx: Context<InitClient>, params: InitClientParams) -> Result<()> {
+        InitClient::actuate(&ctx, &params)
+    }
 }
 
 #[derive(Accounts)]
@@ -57,5 +61,5 @@ pub enum FeedErrorCode {
     #[msg("Switchboard feed has not been updated in 5 minutes")]
     StaleFeed,
     #[msg("Switchboard feed exceeded confidence interval")]
-    ConfidenceIntervalExceeded
+    ConfidenceIntervalExceeded,
 }
